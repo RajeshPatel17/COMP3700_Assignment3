@@ -1,6 +1,6 @@
-public class NoteModal {
+public class NoteModel {
     public int noteID;
     public String title;
     public String text;
-    public String userID;
+    public int userID;
 }

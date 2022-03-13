@@ -9,5 +9,5 @@ public interface DataAccess {
 
     NoteModel loadNote(int noteID);
 
-    ResultSet searchNotes(String keywords);
+    void searchNotes(String keywords);
 }

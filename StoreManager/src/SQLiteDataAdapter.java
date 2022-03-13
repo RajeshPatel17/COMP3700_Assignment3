@@ -81,5 +81,56 @@ public class SQLiteDataAdapter implements DataAccess {
         return product;
     }
 
+    @Override
+    public void saveNote(NoteModel note) {
+        try {
+            Statement stmt = conn.createStatement();
 
+            if (loadNote(note.noteID) == null) {           // this is a new product!
+                stmt.execute("INSERT INTO Notes(NoteID, Title, Text, UserID) VALUES ("
+                        + note.noteID + ","
+                        + '\'' + note.title + '\'' + ","
+                        + '\'' + note.text + '\'' + ","
+                        + note.userID + ")"
+                );
+            }
+            else {
+                stmt.executeUpdate("UPDATE Notes SET "
+                        + "NoteID = " + note.noteID + ","
+                        + "Title = " + '\'' + note.title + '\'' + ","
+                        + "Text = " + '\'' + note.text + '\'' + ","
+                        + "UserID = " + note.userID +
+                        " WHERE NoteID = " + note.noteID
+                );
+
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public NoteModel loadNote(int noteID) {
+        NoteModel note = null;
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Notes WHERE NoteID = " + noteID);
+            if (rs.next()) {
+                note = new NoteModel();
+                note.noteID = rs.getInt(1);
+                note.title = rs.getString(2);
+                note.text = rs.getString(3);
+                note.userID = rs.getInt(4);
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return note;
+    }
+
+    @Override
+    public void searchNotes(String keywords){
+        return;
+    }
 }

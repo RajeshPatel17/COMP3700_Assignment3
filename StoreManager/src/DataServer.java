@@ -129,6 +129,28 @@ class ClientHandler extends Thread
                     res.body = "";
                 }
 
+
+                if (req.code == RequestModel.LOAD_NOTE_REQUEST) {
+
+                    int id = Integer.parseInt(req.body);
+
+                    System.out.println("The Client asks for a note with ID = " + id);
+
+                    NoteModel model = dao.loadNote(id);
+
+                    if (model != null) {
+                        res.code = ResponseModel.OK;
+                        res.body = gson.toJson(model);
+                    }
+                    else {
+                        res.code = ResponseModel.DATA_NOT_FOUND;
+                        res.body = "";
+                    }
+                } else {
+                    res.code = ResponseModel.UNKNOWN_REQUEST;
+                    res.body = "";
+                }
+
                 String json = gson.toJson(res);
                 System.out.println("JSON object of ResponseModel: " + json);
 

@@ -7,7 +7,7 @@ public class NoteController implements ActionListener{
     NoteView thisNoteView;
     DataAccess thisDAO;
 
-    public NoteController(ProductView view, DataAccess dao){
+    public NoteController(NoteView view, DataAccess dao){
         thisNoteView = view;
         thisDAO = dao;
         thisNoteView.loadButton.addActionListener(this);
@@ -38,7 +38,7 @@ public class NoteController implements ActionListener{
             } else {
                 thisNoteView.titleText.setText(noteModel.title);
                 thisNoteView.textText.setText(noteModel.text);
-                thisNoteView.userIDText.setText(noteModel.userID);
+                thisNoteView.userIDText.setText(Integer.toString(noteModel.userID));
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Invalid Note ID");

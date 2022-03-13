@@ -1,7 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class NoteView {
+public class NoteView extends JFrame {
     
     public JTextField noteIDText = new JTextField(30);
     public JTextField titleText = new JTextField(50);
