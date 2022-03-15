@@ -4,13 +4,12 @@ import java.awt.*;
 public class NoteView extends JFrame {
     
     public JTextField noteIDText = new JTextField(30);
-    public JTextField titleText = new JTextField(50);
-    public JTextField textText = new JTextField(500);
+    public JTextField titleText = new JTextField(30);
+    public JTextField textText = new JTextField(50);
     public JTextField userIDText = new JTextField(30);
 
     public JButton loadButton = new JButton("Load Note");
     public JButton saveButton = new JButton("Save Note");
-    public JButton searchButton = new JButton("Search Note");
 
     public NoteView(){
 
@@ -31,7 +30,7 @@ public class NoteView extends JFrame {
 
         JPanel line3 = new JPanel();
         line3.add(new JLabel("Text"));
-        line3.add(titleText);
+        line3.add(textText);
         this.getContentPane().add(line3);
 
         JPanel line4 = new JPanel();
@@ -42,7 +41,6 @@ public class NoteView extends JFrame {
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(loadButton);
         buttonPanel.add(saveButton);
-        buttonPanel.add(searchButton);
         this.getContentPane().add(buttonPanel);
 
     }

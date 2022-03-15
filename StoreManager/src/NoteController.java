@@ -12,7 +12,6 @@ public class NoteController implements ActionListener{
         thisDAO = dao;
         thisNoteView.loadButton.addActionListener(this);
         thisNoteView.saveButton.addActionListener(this);
-        thisNoteView.searchButton.addActionListener(this);
     }
 
     @Override
@@ -22,9 +21,6 @@ public class NoteController implements ActionListener{
         }
         if(event.getSource() == thisNoteView.saveButton){
             saveNote();
-        }
-        if(event.getSource() == thisNoteView.searchButton){
-            searchNotesandDisplay();
         }
     }
 
@@ -61,14 +57,4 @@ public class NoteController implements ActionListener{
             e.printStackTrace();
         }
     }
-
-    private void searchNotesandDisplay(){
-        String keywords = thisNoteView.titleText.getText();
-
-
-    }
-
-
-
-
 }

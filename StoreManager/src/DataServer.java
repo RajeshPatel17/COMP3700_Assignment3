@@ -18,8 +18,6 @@ public class DataServer
         // server is listening on port 5056
         ServerSocket ss = new ServerSocket(5056);
 
-
-
         // running infinite loop for getting
         // client request
 
@@ -61,8 +59,6 @@ public class DataServer
 }
 
 
-
-
 // ClientHandler class
 class ClientHandler extends Thread
 {
@@ -71,10 +67,7 @@ class ClientHandler extends Thread
     final Socket s;
 
     Gson gson = new Gson();
-
     DataAccess dao = new SQLiteDataAdapter();
-
-
 
     // Constructor
     public ClientHandler(Socket s, DataInputStream dis, DataOutputStream dos)
@@ -89,7 +82,8 @@ class ClientHandler extends Thread
     public void run()
     {
         String received;
-        while (true) {
+        boolean exit = false;
+        while (!exit) {
             try {
                 // receive the answer from client
                 received = dis.readUTF();
@@ -97,63 +91,64 @@ class ClientHandler extends Thread
                 System.out.println("Message from client " + received);
 
                 RequestModel req = gson.fromJson(received, RequestModel.class);
-
-                if (req.code == RequestModel.EXIT_REQUEST) {
-                    System.out.println("Client " + this.s + " sends exit...");
-                    System.out.println("Closing this connection.");
-                    this.s.close();
-                    System.out.println("Connection closed");
-                    break;
-                }
-
                 ResponseModel res = new ResponseModel();
+                
+                switch(req.code){
 
-                if (req.code == RequestModel.LOAD_PRODUCT_REQUEST) {
+                    case RequestModel.EXIT_REQUEST:
+                        System.out.println("Client " + this.s + " sends exit...");
+                        System.out.println("Closing this connection.");
+                        this.s.close();
+                        System.out.println("Connection closed");
+                        exit = true;
+                        break;
+                    
+                    case RequestModel.LOAD_NOTE_REQUEST:
+                        int id = Integer.parseInt(req.body);
+                        System.out.println("The Client asks for a note with ID = " + id);
+                        NoteModel model = dao.loadNote(id);
+                        if (model != null) {
+                            res.code = ResponseModel.OK;
+                            res.body = gson.toJson(model);
+                        } else {
+                            res.code = ResponseModel.DATA_NOT_FOUND;
+                            res.body = "";
+                        }
+                        break;
 
-                    int id = Integer.parseInt(req.body);
-
-                    System.out.println("The Client asks for a product with ID = " + id);
-
-                    ProductModel model = dao.loadProduct(id);
-
-                    if (model != null) {
-                        res.code = ResponseModel.OK;
-                        res.body = gson.toJson(model);
-                    }
-                    else {
-                        res.code = ResponseModel.DATA_NOT_FOUND;
+                    case RequestModel.SAVE_NOTE_REQUEST:
+                        NoteModel note = gson.fromJson(req.body, NoteModel.class);
+                        System.out.println("The Client asks to store the Note: \n" + note.toString());
+                        dao.saveNote(note);
+                        NoteModel confirm = dao.loadNote(note.noteID);
+                        if(confirm != null){
+                            res.code = ResponseModel.OK;
+                            res.body = gson.toJson(note);
+                        } else {
+                            res.code = ResponseModel.DATA_NOT_FOUND;
+                            res.body = "";
+                        }
+                        break;
+                    
+                    case RequestModel.SEARCH_NOTE_REQUEST:
+                        String keyword = req.body;
+                        SearchModel found = dao.searchNotes(keyword);
+                        if(found != null){
+                            res.code = ResponseModel.OK;
+                            res.body = gson.toJson(found);
+                        } else {
+                            res.code = ResponseModel.DATA_NOT_FOUND;
+                            res.body = "";
+                        }
+                        break;
+                    
+                    default:
+                        res.code = ResponseModel.UNKNOWN_REQUEST;
                         res.body = "";
-                    }
-                } else {
-                    res.code = ResponseModel.UNKNOWN_REQUEST;
-                    res.body = "";
-                }
-
-
-                if (req.code == RequestModel.LOAD_NOTE_REQUEST) {
-
-                    int id = Integer.parseInt(req.body);
-
-                    System.out.println("The Client asks for a note with ID = " + id);
-
-                    NoteModel model = dao.loadNote(id);
-
-                    if (model != null) {
-                        res.code = ResponseModel.OK;
-                        res.body = gson.toJson(model);
-                    }
-                    else {
-                        res.code = ResponseModel.DATA_NOT_FOUND;
-                        res.body = "";
-                    }
-                } else {
-                    res.code = ResponseModel.UNKNOWN_REQUEST;
-                    res.body = "";
                 }
 
                 String json = gson.toJson(res);
                 System.out.println("JSON object of ResponseModel: " + json);
-
 
                 dos.writeUTF(json);
                 dos.flush();
@@ -163,7 +158,6 @@ class ClientHandler extends Thread
             }
 
         }
-
         try
         {
             // closing resources

@@ -4,21 +4,21 @@ public class StoreManager {
 
     private RemoteDataAdapter dao;
 
-    private ProductView productView = null;
-
     private NoteView noteView = null;
 
-    public ProductView getProductView() {
-        return productView;
-    }
+    private SearchView searchView = null;
 
     public NoteView getNoteView() {
         return noteView;
     }
 
-    private ProductController productController = null;
+    public SearchView getSearchView() {
+        return searchView;
+    }
 
     private NoteController noteController = null;
+
+    private SearchController searchController = null;
 
     public static StoreManager getInstance() {
         if (instance == null)
@@ -34,15 +34,9 @@ public class StoreManager {
         // do some initialization here!!!
         dao = new RemoteDataAdapter();
         dao.connect();
-        productView = new ProductView();
-        productController = new ProductController(productView, dao);
         noteView = new NoteView();
         noteController = new NoteController(noteView, dao);
+        searchView = new SearchView();
+        searchController = new SearchController(searchView, dao);
     }
-
-
-
-
-
-
 }

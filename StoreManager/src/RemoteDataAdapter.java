@@ -22,141 +22,80 @@ public class RemoteDataAdapter implements DataAccess {
     }
 
     @Override
-    public void saveProduct(ProductModel product) {
-
-    }
-
-    @Override
-    public ProductModel loadProduct(int productID) {
-        RequestModel req = new RequestModel();
-        req.code = req.LOAD_PRODUCT_REQUEST;
-        req.body = String.valueOf(productID);
-
-        String json = gson.toJson(req);
-        try {
-            dos.writeUTF(json);
-
-            String received = dis.readUTF();
-
-            System.out.println("Server response:" + received);
-
-            ResponseModel res = gson.fromJson(received, ResponseModel.class);
-
-            if (res.code == ResponseModel.UNKNOWN_REQUEST) {
-                System.out.println("The request is not recognized by the Server");
-                return null;
-            }
-            else         // this is a JSON string for a product information
-                if (res.code == ResponseModel.DATA_NOT_FOUND) {
-                    System.out.println("The Server could not find a product with that ID!");
-                    return null;
-                }
-                else {
-                    ProductModel model = gson.fromJson(res.body, ProductModel.class);
-                    System.out.println("Receiving a ProductModel object");
-                    System.out.println("ProductID = " + model.productID);
-                    System.out.println("Product name = " + model.name);
-                    return model; // found this product and return!!!
-                }
-
-
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return null;
-    }
-
-    @Override
     public NoteModel loadNote(int noteID) {
         RequestModel req = new RequestModel();
-        req.code = req.LOAD_NOTE_REQUEST;
-        req.body = String.valueOf(noteID);
+        req.code = RequestModel.LOAD_NOTE_REQUEST;
+        req.body = Integer.toString(noteID);
 
         String json = gson.toJson(req);
         try {
+
             dos.writeUTF(json);
-
             String received = dis.readUTF();
-
             System.out.println("Server response:" + received);
-
             ResponseModel res = gson.fromJson(received, ResponseModel.class);
 
             if (res.code == ResponseModel.UNKNOWN_REQUEST) {
                 System.out.println("The request is not recognized by the Server");
                 return null;
-            }
-            else         // this is a JSON string for a product information
+            } else {
                 if (res.code == ResponseModel.DATA_NOT_FOUND) {
                     System.out.println("The Server could not find a note with that ID!");
                     return null;
-                }
-                else {
+                } else {
                     NoteModel model = gson.fromJson(res.body, NoteModel.class);
                     System.out.println("Receiving a NoteModel object");
                     System.out.println("NoteID = " + model.noteID);
                     System.out.println("Note title = " + model.title);
-                    return model; // found this product and return!!!
+                    System.out.println("Note text = " + model.text);
+                    System.out.println("UserID = " + model.userID);
+                    return model; // found this note and return!!!
                 }
-
-
-
+            }        // this is a JSON string for a product information
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
         return null;
     }
 
     @Override
     public void saveNote(NoteModel note) {
         RequestModel req = new RequestModel();
-        req.code = req.SAVE_NOTE_REQUEST;
-        req.body = String.valueOf(noteID);
-
+        req.code = RequestModel.SAVE_NOTE_REQUEST;
+        req.body = gson.toJson(note);
+        
         String json = gson.toJson(req);
         try {
+
             dos.writeUTF(json);
-
             String received = dis.readUTF();
-
             System.out.println("Server response:" + received);
-
             ResponseModel res = gson.fromJson(received, ResponseModel.class);
 
             if (res.code == ResponseModel.UNKNOWN_REQUEST) {
                 System.out.println("The request is not recognized by the Server");
-                return;
-            }
-            else         // this is a JSON string for a product information
+            } else { 
                 if (res.code == ResponseModel.DATA_NOT_FOUND) {
-                    System.out.println("The Server could not find a product with that ID!");
-                    return;
-                }
-                else {
+                    System.out.println("The Server could not save the Note!");
+                } else {
                     NoteModel model = gson.fromJson(res.body, NoteModel.class);
-                    System.out.println("Receiving a NoteModel object");
+                    System.out.println("Saved the following Note!");
                     System.out.println("NoteID = " + model.noteID);
                     System.out.println("Note title = " + model.title);
-                    return; // found this product and return!!!
+                    System.out.println("Note text = " + model.text);
+                    System.out.println("UserID = " + model.userID);
                 }
-
-
-
+            }         
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
-        return;
     }
 
     @Override
-    public void searchNotes(String keywords) {
+    public SearchModel searchNotes(String keyword) {
         RequestModel req = new RequestModel();
-        req.code = req.SEARCH_NOTE_REQUEST;
-        req.body = keywords;
+        req.code = RequestModel.SEARCH_NOTE_REQUEST;
+        req.body = keyword;
 
         String json = gson.toJson(req);
         try {
@@ -170,27 +109,22 @@ public class RemoteDataAdapter implements DataAccess {
 
             if (res.code == ResponseModel.UNKNOWN_REQUEST) {
                 System.out.println("The request is not recognized by the Server");
-                return;
-            }
-            else         // this is a JSON string for a product information
+                return null;
+            } else { 
                 if (res.code == ResponseModel.DATA_NOT_FOUND) {
-                    System.out.println("The Server could not find a product with that ID!");
-                    return;
+                    System.out.println("The Server could not find a note that matches your keyword!");
+                    return null;
+                } else {
+                    SearchModel model = gson.fromJson(res.body, SearchModel.class);
+                    System.out.println("Receiving a SearchModel object");
+                    System.out.println(model.toString());
+                    return model; // found this product and return!!!
                 }
-                else {
-                    NoteModel model = gson.fromJson(res.body, NoteModel.class);
-                    System.out.println("Receiving a NoteModel object");
-                    System.out.println("NoteID = " + model.noteID);
-                    System.out.println("Note title = " + model.title);
-                    return; // found this product and return!!!
-                }
-
-
+            }        
 
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
-        return;
+        return null;
     }
 }
