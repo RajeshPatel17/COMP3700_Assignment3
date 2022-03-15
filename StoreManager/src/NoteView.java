@@ -5,7 +5,7 @@ public class NoteView extends JFrame {
     
     public JTextField noteIDText = new JTextField(30);
     public JTextField titleText = new JTextField(30);
-    public JTextField textText = new JTextField(50);
+    public JTextField textText = new JTextField(30);
     public JTextField userIDText = new JTextField(30);
 
     public JButton loadButton = new JButton("Load Note");

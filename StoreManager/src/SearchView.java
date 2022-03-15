@@ -5,7 +5,7 @@ import java.awt.*;
 public class SearchView extends JFrame{
     
     public JTextField keywordField = new JTextField(30);
-    public JTextField results =  new JTextField(50);
+    public JTextField results =  new JTextField(30);
 
     public JButton searchButton = new JButton("Search Note");
     public JButton clearButton = new JButton("Clear Fields");
